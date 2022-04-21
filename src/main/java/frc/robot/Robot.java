@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
     PigeonIMU gyro;
 
     Profile p;
+    Path path;
 
     public Robot() {
         super(PERIOD);
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
         double maxV = 2.0;
         double maxA = 3.0;
         p = new Profile(maxV, maxA);
+        path = new Path(0, 0, fwdPID, turnPID, leftMotor, rightMotor);
 
         NetworkTableInstance.getDefault().setUpdateRate(PERIOD);
 
@@ -148,7 +150,11 @@ public class Robot extends TimedRobot {
 
 
 
-        turnPID.setTarget(Math.toRadians(0));
+        // turnPID.setTarget(Math.toRadians(0));
+
+        // add route   x  y
+        path.add_route(1, 0);
+        path.add_route(0, 1);
 
         skip = 10;
     }
@@ -186,8 +192,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("profile position", profile_position);
         SmartDashboard.putNumber("profile velocity", profile_velocity);
 
-        leftMotor.set(ControlMode.PercentOutput, (forward - turn) / 12.0);
-        rightMotor.set(ControlMode.PercentOutput, (forward + turn) / 12.0);
+        path.travel_next();
+      
+        //leftMotor.set(ControlMode.PercentOutput, (forward - turn) / 12.0);
+        //rightMotor.set(ControlMode.PercentOutput, (forward + turn) / 12.0);
     }
 
     @Override
